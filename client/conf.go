@@ -35,6 +35,16 @@ func (client *Client) SetConf(snapName string, patch map[string]interface{}) (ch
 	return client.doAsync("PUT", "/v2/snaps/"+snapName+"/conf", nil, nil, bytes.NewReader(b))
 }
 
+func (client *Client) UnSetConf(snapName string, key string) (changeID string, err error) {
+	// Prepare query
+	query := url.Values{}
+	query.Del(key)
+	if err != nil {
+		return "", err
+	}
+	return client.doAsync("DELETE", "/v2/snaps/"+snapName+"/conf", query, nil, nil)
+}
+
 // Conf asks for a snap's current configuration.
 //
 // Note that the configuration may include json.Numbers.

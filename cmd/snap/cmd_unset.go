@@ -69,16 +69,18 @@ func (x *cmdUnset) Execute(args []string) error {
 	}
 
 	snapName := string(x.Positional.Snap)
-	id, err := x.client.SetConf(snapName, patchValues)
-	if err != nil {
-		return err
-	}
 
-	if _, err := x.wait(id); err != nil {
-		if err == noWait {
-			return nil
+	for k, _ := range patchValues {
+		id, err := x.client.UnSetConf(snapName, k)
+		if err != nil {
+			return err
 		}
-		return err
+		if _, err := x.wait(id); err != nil {
+			if err == noWait {
+				return nil
+			}
+			return err
+		}
 	}
 
 	return nil
